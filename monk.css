@@ -1,0 +1,75 @@
+.document
+{
+	margin-left: auto;
+	margin-right: auto;
+	width: 760px;
+}
+
+#task-root
+{
+	padding: 0px;
+}
+
+#prototype
+{
+	display: none;
+}
+
+#github
+{
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: 0;
+}
+
+.task-list li
+{
+	list-style-type: none;
+	list-style-position: inside;
+	margin: 0px;
+	padding: 0px;
+}
+
+.ui-state-highlight { height: 1.5em; line-height: 1.2em; background: green }
+
+.task-close
+{
+	padding: 2px;
+	text-align: center;
+	width: 20px;
+}
+
+.task-close:hover
+{
+	background: blue;
+}
+
+.task-add-button
+{
+	padding: 2px;
+	text-align: center;
+}
+
+.task-add-button:hover
+{
+	background: blue;
+}
+
+.task-children
+{
+	position: relative;
+	left: 30px;
+}
+
+.task-title-edit
+{
+	display: none;
+	padding: 2px;
+}
+
+.task-title
+{
+	margin-left: 30px;
+	padding: 2px;
+}

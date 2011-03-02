@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+
+<html>
+	<head>
+		<link rel="stylesheet" href="monk.css" type="text/css">
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.js"></script>
+		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/jquery-ui.js"></script>
+		<script src="monk.js"></script>
+	</head>
+
+	<body>
+		<div class="document">
+
+		<a id="github" href="http://github.com/chaosgame">
+			<img src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub">
+		</a>
+
+		<!-- <h2>Monk</h2> -->
+
+		<input id="task-add" type="text">
+
+		<div id="prototype">
+			<li>
+				<input type="checkbox" style="float: left">
+				<div class="task-close" style="float: right">[x]</div>
+				<div class="task-title">This is a task</div>
+				<input class="task-title-edit" type="text">
+				<!-- replace buttons with CSS3 images, datebox -->
+				<ul class="task-list">
+					<div class="task-add-button"></div>
+				</ul>
+				<div class="task-add-button"></div>
+			</li>
+		</div>
+
+		<ul class="task-list" id="task-root">
+		</ul>
+
+		</div>
+
+	</body>
+
+</html>
