@@ -1,0 +1,12 @@
+
+Things left todo:
+ * drag/drop
+   - fix issue with cursor not being what activates the drop zone
+   - fix issue with editing being activated on mouseup
+ * html5 local storage
+ * theming
+   - images for buttons
+   - logo
+   - typography
+ * dates
+ * cloud storage/syncing
