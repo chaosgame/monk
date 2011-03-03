@@ -31,7 +31,8 @@
 	padding: 0px;
 }
 
-.ui-state-highlight { height: 1.5em; line-height: 1.2em; background: green }
+.ui-state-highlight { background: green }
+.ui-state-active { background: green }
 
 .task-close
 {
@@ -45,13 +46,24 @@
 	background: blue;
 }
 
-.task-add-button
+#task-add-next
 {
 	padding: 2px;
 	text-align: center;
 }
 
-.task-add-button:hover
+#task-add-child
+{
+	padding: 2px;
+	text-align: center;
+}
+
+#task-add-next:hover
+{
+	background: blue;
+}
+
+#task-add-child:hover
 {
 	background: blue;
 }

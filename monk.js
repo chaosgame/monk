@@ -1,13 +1,40 @@
 $(document).ready(function() {
-	// TODO: check that it's not the empty string
+	// TODO: a library of functions could possibly be nice
+	// TODO: we can actually have multiple classes per html element
+	//       (separate by spaces)
+
+	function putTaskNextChild(task, target) {
+		task.insertAfter(target.closest(".task-list > *"))
+			.show();
+	}
+
+	function createTask() {
+		var task = $("#prototype > li")
+			.clone(deepWithDataAndEvents=true)
+			.draggable({
+				handle: "> .task-title",
+				revert: "invalid",
+				revertDuration: 100,
+			});
+		task.find("#task-add-child,#task-add-next")
+			.droppable({
+				hoverClass: "ui-state-highlight",
+				drop: function(e, ui) {
+					// TODO: There should be a better way to do this
+					$(ui.draggable).css({top:0,left:0});
+					putTaskNextChild($(ui.draggable), $(this));
+				}
+			});
+		return task;
+	}
+
 	$("#task-add").keypress(function(e) {
-		if (e.keyCode == 13) {
-			$("#prototype > li")
-				.clone(deepWithDataAndEvents=true)
+		if (e.keyCode == 13 && $("#task-add").val().trim() != "") {
+			createTask()
 				.appendTo("#task-root")
-				.show()
 				.find(".task-title")
-					.html($("#task-add").val());
+					.html($("#task-add").val())
+				.show();
 			$("#task-add").val("");
 		}
 	});
@@ -16,15 +43,14 @@ $(document).ready(function() {
 		$(e.currentTarget).parent().remove();
 	});
 
-	$(".task-add-button").click(function(e) {
-		$("#prototype > li")
-			.clone(deepWithDataAndEvents=true)
-			.insertAfter($(e.currentTarget).closest(".task-list > *"))
-			.show();
+	$("#task-add-child,#task-add-next").click(function(e) {
+		putTaskNextChild(createTask(), $(e.currentTarget));
 	});
 
 	// TODO: make this work with drag/drop
 	// we want this to be either on mouseup or as a drag/drop callback?
+	// only have a single instance that moves around?
+	// drag/drop needs just a little bit of snap
 	$(".task-title").click(function(e) {
 		var title = $(e.currentTarget);
 		title.hide();
@@ -41,19 +67,5 @@ $(document).ready(function() {
 			.html(title.val())
 			.show();
 	});
-
-	// TODO: rewrite with drag/drop
-	$(".task-list").sortable({
-		handle: "> *",
-		items: "li",
-		placeholder: "ui-state-highlight",
-		connectWith: ".task-list"
-	});
-
-	// TODO: date picker
-
-	// TODO: html5 local storage
-
-	// TODO: cloud syncing
 });
 
