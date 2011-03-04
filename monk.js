@@ -1,8 +1,4 @@
 $(document).ready(function() {
-	// TODO: a library of functions could possibly be nice
-	// TODO: we can actually have multiple classes per html element
-	//       (separate by spaces)
-
 	function putTaskNextChild(task, target) {
 		task.insertAfter(target.closest(".task-list > *"))
 			.show();
@@ -21,10 +17,6 @@ $(document).ready(function() {
 
 	function getParent(task) {
 		return task.parents(".task").first();
-	}
-
-	function saveParent(task) {
-		saveTask(getParent(task));
 	}
 
 	function createTask(id) {
@@ -48,7 +40,7 @@ $(document).ready(function() {
 					var oldParentTask = getParent($(ui.draggable));
 					putTaskNextChild($(ui.draggable), $(this));
 					saveTask(oldParentTask);
-					saveParent($(ui.draggable));
+					saveTask(getParent($(ui.draggable)));
 				}
 			});
 		return task;
@@ -62,8 +54,8 @@ $(document).ready(function() {
 	}
 
 	function removeTask(task) {
+		_.each(task.find("> .task-list > .task"), function(child) { removeTask($(child))});
 		localStorage.removeItem(task.attr("id"));
-		// TODO: remove subtasks
 	}
 
 	$("#task-add").keypress(function(e) {
@@ -89,7 +81,7 @@ $(document).ready(function() {
 	$(".task-add-child,.task-add-next").click(function(e) {
 		var task = createTask();
 		putTaskNextChild(task, $(e.currentTarget));
-		saveParent(task);
+		saveTask(getParent(task));
 		saveTask(task);
 	});
 
