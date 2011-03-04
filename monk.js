@@ -95,16 +95,80 @@ $(document).ready(function() {
 		title.siblings(".task-title-edit")
 			.val(title.text())
 			.show()
-			.focus();
+			.focus()
+			.select();
 	});
 
 	$(".task-title-edit").focusout(function(e) {
-		var title = $(e.currentTarget);
-		title.hide();
-		title.siblings(".task-title")
-			.text(title.val())
-			.show();
-		saveTask(title.closest(".task"));
+		var editing = $(e.currentTarget);
+		if (editing.hasClass(".task-title-moving"))
+			return;
+		var title = editing.siblings(".task-title");
+		if (editing.val().trim() != "") {
+				title.text(editing.val());
+				saveTask(title.closest(".task"));
+		}
+		editing.hide();
+		title.show();
+	});
+
+	var shiftDown = false;
+
+	$(".task-title-edit").keydown(function(e) {
+		switch (e.keyCode) {
+		case 9:
+			var title = $(e.currentTarget);
+			var task = title.closest(".task");
+
+			if (shiftDown) {
+				var parentTask = getParent(task);
+
+				if (!getParent(parentTask).size())
+					break;
+
+				title.addClass(".task-title-moving");
+
+				task.insertAfter(parentTask);
+				saveTask(parentTask);
+				saveTask(getParent(task));
+
+				title.removeClass(".task-title-moving");
+				title.focus().select();
+			} else {
+				var prev = task.prev(".task");
+
+				if (!prev.size())
+					break;
+
+				title.addClass(".task-title-moving");
+
+				task.appendTo(prev.children(".task-list"));
+				saveTask(prev);
+				saveTask(getParent(prev));
+
+				title.removeClass(".task-title-moving");
+				title.focus().select();
+			}
+			break;
+		case 16:
+			shiftDown = true;
+			break;
+		}
+
+		return false;
+	});
+
+	$(".task-title-edit").keyup(function(e) {
+		switch (e.keyCode) {
+		case 13:
+			$(e.currentTarget).focusout();
+			break;
+		case 16:
+			shiftDown = false;
+			break;
+		}
+
+		return false;
 	});
 
 	function loadTask(id) {
