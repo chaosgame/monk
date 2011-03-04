@@ -3,9 +3,11 @@
 <html>
 	<head>
 		<link rel="stylesheet" href="monk.css" type="text/css">
-		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.js"></script>
-		<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.10/jquery-ui.js"></script>
+		<script src="lib/jquery-min.js"></script>
+		<script src="lib/jquery-ui-min.js"></script>
+		<script src="lib/underscore-min.js"></script>
 		<script src="monk.js"></script>
+		<!-- <script src="lib/json2.js"></script> -->
 	</head>
 
 	<body>
@@ -15,26 +17,31 @@
 			<img src="http://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png" alt="Fork me on GitHub">
 		</a>
 
-		<!-- <h2>Monk</h2> -->
+		<h2>Monk</h2>
 
 		<input id="task-add" type="text">
 
 		<div id="prototype">
-			<li>
+			<li class="task">
+				<!-- TODO: silent id field -->
 				<input type="checkbox" style="float: left">
 				<div class="task-close" style="float: right">[x]</div>
 				<div class="task-title">This is a task</div>
 				<input class="task-title-edit" type="text">
 
 				<ul class="task-list">
-					<div id="task-add-child"></div>
+					<div class="task-add-child"></div>
 				</ul>
-				<div id="task-add-next"></div>
+				<div class="task-add-next"></div>
 			</li>
 		</div>
 
-		<ul class="task-list" id="task-root">
-		</ul>
+		<div class="task" id="task-root">
+			<ul class="task-list" id="task-root-list">
+				<div class="task-add-child"></div>
+			</ul>
+			<div class="task-title"></div>
+		</div>
 
 		</div>
 
