@@ -1,0 +1,98 @@
+#document
+{
+	margin-left: auto;
+	margin-right: auto;
+	width: 760px;
+}
+
+#header
+{
+	display: block;
+}
+
+#task-root-list
+{
+	padding: 0px;
+}
+
+#prototype
+{
+	display: none;
+}
+
+#github
+{
+	position: absolute;
+	top: 0;
+	right: 0;
+	border: 0;
+}
+
+body
+{
+	font-family: 'Merriweather', arial, serif;
+}
+
+.task
+{
+	list-style-type: none;
+	list-style-position: inside;
+	margin: 0px;
+	padding: 0px;
+}
+
+.ui-state-highlight { background: green }
+.ui-state-active { background: green }
+
+.task-close
+{
+	padding: 2px;
+	text-align: center;
+	width: 20px;
+}
+
+.task-close:hover
+{
+	background: blue;
+}
+
+.task-add-next
+{
+	padding: 2px;
+	text-align: center;
+}
+
+.task-add-child
+{
+	padding: 2px;
+	text-align: center;
+}
+
+.task-add-next:hover
+{
+	background: blue;
+}
+
+.task-add-child:hover
+{
+	background: blue;
+}
+
+.task-children
+{
+	position: relative;
+	left: 30px;
+}
+
+.task-title-edit
+{
+	display: none;
+	width: 85%;
+	padding: 2px;
+}
+
+.task-title
+{
+	margin-left: 30px;
+	padding: 2px;
+}
