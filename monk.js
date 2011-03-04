@@ -56,7 +56,7 @@ $(document).ready(function() {
 
 	function saveTask(task) {
 		localStorage.setItem(task.attr("id"), JSON.stringify({
-			title: task.children(".task-title").html(),
+			title: task.children(".task-title").text(),
 			children: _.map(task.find("> .task-list > .task"), function(x){return $(x).attr("id")})
 		}));
 	}
@@ -70,7 +70,7 @@ $(document).ready(function() {
 		if (e.keyCode == 13 && $("#task-add").val().trim() != "") {
 			var task = createTask().appendTo("#task-root-list");
 			task.find(".task-title")
-					.html($("#task-add").val())
+					.text($("#task-add").val())
 			task.show();
 			saveTask(task);
 			saveTask($("#task-root"));
@@ -101,7 +101,7 @@ $(document).ready(function() {
 		var title = $(e.currentTarget);
 		title.hide();
 		title.siblings(".task-title-edit")
-			.val(title.html())
+			.val(title.text())
 			.show()
 			.focus();
 	});
@@ -110,7 +110,7 @@ $(document).ready(function() {
 		var title = $(e.currentTarget);
 		title.hide();
 		title.siblings(".task-title")
-			.html(title.val())
+			.text(title.val())
 			.show();
 		saveTask(title.closest(".task"));
 	});
@@ -118,7 +118,7 @@ $(document).ready(function() {
 	function loadTask(id) {
 		var task = JSON.parse(localStorage.getItem(id));
 		var element = createTask(id);
-		element.find(".task-title").html(task.title);
+		element.find(".task-title").text(task.title);
 		_.each(task.children, function(child) {
 			loadTask(child).appendTo(element.find("> .task-list"));
 		});
