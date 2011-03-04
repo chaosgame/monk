@@ -124,7 +124,7 @@ $(document).ready(function() {
 				var parentTask = getParent(task);
 
 				if (!getParent(parentTask).size())
-					break;
+					return false;
 
 				title.addClass(".task-title-moving");
 
@@ -138,7 +138,7 @@ $(document).ready(function() {
 				var prev = task.prev(".task");
 
 				if (!prev.size())
-					break;
+					return false;
 
 				title.addClass(".task-title-moving");
 
@@ -149,13 +149,12 @@ $(document).ready(function() {
 				title.removeClass(".task-title-moving");
 				title.focus().select();
 			}
-			break;
+			return false;
 		case 16:
 			shiftDown = true;
 			break;
+		default:
 		}
-
-		return false;
 	});
 
 	$(".task-title-edit").keyup(function(e) {
@@ -167,8 +166,6 @@ $(document).ready(function() {
 			shiftDown = false;
 			break;
 		}
-
-		return false;
 	});
 
 	function loadTask(id) {
