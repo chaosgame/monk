@@ -26,7 +26,7 @@ $(document).ready(function() {
 			.clone(deepWithDataAndEvents=true)
 			.attr("id", id)
 			.draggable({
-				handle: "> .task-title",
+				handle: "> *",
 				revert: "invalid",
 				revertDuration: 100,
 			});
@@ -48,7 +48,7 @@ $(document).ready(function() {
 
 	function saveTask(task) {
 		localStorage.setItem(task.attr("id"), JSON.stringify({
-			title: task.children(".task-title").text(),
+			title: task.find("> div > .task-title").text(),
 			children: _.map(task.find("> .task-list > .task"), function(x){return $(x).attr("id")})
 		}));
 	}
@@ -61,7 +61,7 @@ $(document).ready(function() {
 	$("#task-add").keypress(function(e) {
 		if (e.keyCode == 13 && $("#task-add").val().trim() != "") {
 			var task = createTask().appendTo("#task-root-list");
-			task.find(".task-title")
+			task.find("> div > .task-title")
 					.text($("#task-add").val())
 			task.show();
 			saveTask(task);
@@ -171,7 +171,7 @@ $(document).ready(function() {
 	function loadTask(id) {
 		var task = JSON.parse(localStorage.getItem(id));
 		var element = createTask(id);
-		element.find(".task-title").text(task.title);
+		element.find("> div > .task-title").text(task.title);
 		_.each(task.children, function(child) {
 			loadTask(child).appendTo(element.find("> .task-list"));
 		});
@@ -184,5 +184,40 @@ $(document).ready(function() {
 			loadTask(child).appendTo($("#task-root-list"));
 		});
 	}
+
+	$("#task-root-list > .task-add-child")
+		.droppable({
+			hoverClass: "ui-state-highlight",
+			drop: function(e, ui) {
+				// TODO: There should be a better way to do this
+				$(ui.draggable).css({top:0,left:0});
+
+				var oldParentTask = getParent($(ui.draggable));
+				putTaskNextChild($(ui.draggable), $(this));
+				saveTask(oldParentTask);
+				saveTask(getParent($(ui.draggable)));
+			}
+		});
+
+	$(".checkbox-checked,.checkbox-unchecked").click(function(e) {
+		var $checkbox = $(e.currentTarget);
+		if ($checkbox.hasClass("checkbox-unchecked")) {
+			$(e.currentTarget)
+				.removeClass("checkbox-unchecked")
+				.addClass("checkbox-checked");
+		} else if ($checkbox.hasClass("checkbox-checked")) {
+			$(e.currentTarget)
+				.removeClass("checkbox-checked")
+				.addClass("checkbox-unchecked");
+		}
+	});
+
+	$(".delete").click(function(e) {
+		var task = $(e.currentTarget).closest(".task");
+		var parentTask = getParent(task);
+		removeTask(task);
+		task.remove();
+		saveTask(parentTask);
+	});
 });
 

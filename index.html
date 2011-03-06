@@ -29,11 +29,15 @@
 
 		<div id="prototype">
 			<li class="task">
-				<!-- TODO: silent id field -->
-				<input type="checkbox" style="float: left">
-				<div class="task-close" style="float: right">[x]</div>
-				<div class="task-title">This is a task</div>
-				<input class="task-title-edit" type="text">
+			<!-- TODO: silent id field -->
+				<div>
+					<span class="button checkbox-unchecked" style="float: left"></span>
+					<span class="button delete" style="float: right"></span>
+					<span class="button calendar" style="float: right"></span>
+					<span class="button note" style="float: right"></span>
+					<div class="task-title">This is a task</div>
+					<input class="task-title-edit" type="text">
+				</div>
 
 				<ul class="task-list">
 					<div class="task-add-child"></div>

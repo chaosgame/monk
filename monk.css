@@ -41,8 +41,11 @@ body
 	padding: 0px;
 }
 
-.ui-state-highlight { background: green }
-.ui-state-active { background: green }
+.ui-state-highlight
+{
+	background:black;
+	opacity: 0.35;
+}
 
 .task-close
 {
@@ -59,23 +62,27 @@ body
 .task-add-next
 {
 	padding: 2px;
+	border-radius: 2px;
 	text-align: center;
 }
 
 .task-add-child
 {
 	padding: 2px;
+	border-radius: 2px;
 	text-align: center;
 }
 
 .task-add-next:hover
 {
-	background: blue;
+	background:black;
+	opacity: 0.35;
 }
 
 .task-add-child:hover
 {
-	background: blue;
+	background:black;
+	opacity: 0.35;
 }
 
 .task-children
@@ -95,4 +102,44 @@ body
 {
 	margin-left: 30px;
 	padding: 2px;
+}
+
+.button
+{
+	display:inline-block;
+	width:16px; height:16px;
+	padding: 2px;
+	opacity: 0.05;
+}
+
+.task > div:hover > .button:hover
+{
+	opacity: 1;
+}
+
+.task > div:hover > .button
+{
+	opacity: 0.35;
+}
+
+.checkbox-unchecked {
+	opacity: 0.35;
+	background:url("img/cc/black/png/checkbox_unchecked_icon&16.png") no-repeat center;
+}
+
+.checkbox-checked {
+	opacity: 0.35;
+	background:url("img/cc/black/png/checkbox_checked_icon&16.png") no-repeat center;
+}
+
+.delete {
+	background:url("img/cc/black/png/delete_icon&16.png") no-repeat center;
+}
+
+.calendar {
+	background:url("img/cc/black/png/calendar_1_icon&16.png") no-repeat center;
+}
+
+.note {
+	background:url("img/cc/black/png/notepad_2_icon&16.png") no-repeat center;
 }
