@@ -15,9 +15,8 @@ $(document).ready(function() {
 				this.element.detach();
 				parent.save();
 			}
-			var parent = task.parent();
-			this.element.insertAfter(parent.element);
-			parent.save();
+			this.element.insertAfter(task.element);
+			task.parent().save();
 		},
 
 		insertChild: function(task) {
@@ -31,14 +30,19 @@ $(document).ready(function() {
 		},
 
 		remove: function() {
-			function helper(x) {
-				_.each(x.children(), helper);
-				localStorage.removeItem(x.id());
+			function helper(task) {
+				_.each(task.children(), helper);
+				localStorage.removeItem(task.id());
+				task.element.remove();
 			}
 
 			var parent = this.parent();
 			helper(this);
 			parent.save();
+		},
+
+		previous: function() {
+			return new Task(this.element.prev(".task"));
 		},
 
 		children: function() {
@@ -109,7 +113,8 @@ $(document).ready(function() {
 			});
 		},
 
-		isRoot: function() {
+		exists: function() {
+			return this.element.size() == 1;
 		},
 
 		save: function() {
@@ -204,7 +209,7 @@ $(document).ready(function() {
 	$("#task-add").keypress(function(e) {
 		if (e.keyCode == 13 && $("#task-add").val().trim() != "") {
 			var task = Task.initialize({title: $("#task-add").val()})
-				.insertChild(Task.get($("#task-root")));
+				.insertChild(new Task($("#task-root")));
 			$("#task-add").val("");
 		}
 	});
@@ -219,11 +224,17 @@ $(document).ready(function() {
 	});
 
 	$(".task-insert-child").click(function(e) {
-		new Task().insertChild(Task.get($(e.currentTarget)));
+		var task = Task.initialize({});
+		task.insertChild(Task.get($(e.currentTarget)));
+		task.element.find("> div > .task-title").click();
+		task.element.find("> div > .task-title-edit").addClass("task-title-create");
 	});
 
 	$(".task-insert-after").click(function(e) {
-		new Task().insertAfter(Task.get($(e.currentTarget)));
+		var task = Task.initialize({});
+		task.insertAfter(Task.get($(e.currentTarget)));
+		task.element.find("> div > .task-title").click();
+		task.element.find("> div > .task-title-edit").addClass("task-title-create");
 	});
 
 	// TODO: make this work with drag/drop
@@ -249,8 +260,13 @@ $(document).ready(function() {
 		if ($editing.hasClass("task-title-moving"))
 			return;
 		if ($editing.val().trim() != "") {
+			// TODO use the API
 			$title.text($editing.val());
 			Task.get($title).save();
+			$editing.removeClass("task-title-create");
+		} else if ($editing.hasClass("task-title-create")) {
+			Task.get($title).remove();
+			return;
 		}
 		$editing.hide();
 		$title.show();
@@ -267,30 +283,24 @@ $(document).ready(function() {
 			if (shiftDown) {
 				var parent = task.parent();
 
-				if (!parent.isRoot())
+				if (parent.id() == "task-root")
 					return false;
 
 				$title.addClass("task-title-moving");
-
 				task.insertAfter(parent);
-				parent.save();
-				task.parent().save();
-
 				$title.removeClass("task-title-moving");
+
 				$title.focus().select();
 			} else {
-				var prev = task.prev();
+				var previous = task.previous();
 
-				if (!prev.size())
+				if (!previous.exists())
 					return false;
 
 				$title.addClass("task-title-moving");
-
-				task.insertAfter(prev.find("> div > .task-list"));
-				prev.save();
-				getParent(prev).save();
-
+				task.insertChild(previous);
 				$title.removeClass("task-title-moving");
+
 				$title.focus().select();
 			}
 			return false;
@@ -314,7 +324,7 @@ $(document).ready(function() {
 
 	var root = JSON.parse(localStorage.getItem("task-root"));
 	if (root != null) {
-		var rootTask = Task.get($("#task-root"));
+		var rootTask = new Task($("#task-root"));
 		_.each(root.children, function(child) {
 			Task.load(child).insertChild(rootTask);
 		});
