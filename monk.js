@@ -12,7 +12,7 @@ $(document).ready(function() {
 		insertAfter: function(task) {
 			if (this.element.parent().size() > 0) {
 				var parent = this.parent();
-				parent.element.detach();
+				this.element.detach();
 				parent.save();
 			}
 			var parent = task.parent();
@@ -23,7 +23,7 @@ $(document).ready(function() {
 		insertChild: function(task) {
 			if (this.element.parent().size() > 0) {
 				var parent = this.parent();
-				parent.element.detach();
+				this.element.detach();
 				parent.save();
 			}
 			this.element.appendTo(task.element.children(".task-list"));
@@ -102,7 +102,14 @@ $(document).ready(function() {
 	};
 
 	Task.load = function(id) {
-		return Task.initialize(JSON.parse(localStorage.getItem(id)));
+		var json = JSON.parse(localStorage.getItem(id));
+		var task = Task.initialize(json);
+
+		_.each(json.children, function(child) {
+			Task.load(child).insertChild(task);
+		});
+
+		return task;
 	}
 
 	Task.initialize = function(o) {
@@ -112,15 +119,10 @@ $(document).ready(function() {
 		o.id = _.isUndefined(o.id) ? Task.createId() : o.id;
 		o.title = _.isUndefined(o.title) ? "" : o.title;
 		o.checked = _.isUndefined(o.checked) ? false : o.checked;
-		o.children = _.isUndefined(o.children) ? [] : o.title;
 
 		task.id(o.id);
 		task.title(o.title);
 		task.checked(o.checked);
-
-		// _.each(o.children, function(child) {
-		// 	Task.load(child).insertChild(task);
-		// });
 
 		return task;
 	}
@@ -304,8 +306,9 @@ $(document).ready(function() {
 
 	var root = JSON.parse(localStorage.getItem("task-root"));
 	if (root != null) {
+		var rootTask = Task.get($("#task-root"));
 		_.each(root.children, function(child) {
-			Task.load(child).insertChild(Task.get($("#task-root")));
+			Task.load(child).insertChild(rootTask);
 		});
 	}
 });
