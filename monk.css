@@ -59,27 +59,27 @@ body
 	background: blue;
 }
 
-.task-add-next
+.task-insert-after
 {
 	padding: 2px;
 	border-radius: 2px;
 	text-align: center;
 }
 
-.task-add-child
+.task-insert-child
 {
 	padding: 2px;
 	border-radius: 2px;
 	text-align: center;
 }
 
-.task-add-next:hover
+.task-insert-after:hover
 {
 	background:black;
 	opacity: 0.35;
 }
 
-.task-add-child:hover
+.task-insert-child:hover
 {
 	background:black;
 	opacity: 0.35;
