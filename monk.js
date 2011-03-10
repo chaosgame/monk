@@ -10,12 +10,24 @@ $(document).ready(function() {
 	// TODO: state: moving, creating, none
 	Task.prototype = {
 		insertAfter: function(task) {
-			this.element.insertAfter(task.element.parent(".task-list"));
-			// TODO: update localStorage
+			if (this.element.parent().size() > 0) {
+				var parent = this.parent();
+				parent.element.detach();
+				parent.save();
+			}
+			var parent = task.parent();
+			this.element.insertAfter(parent.element);
+			parent.save();
 		},
 
 		insertChild: function(task) {
+			if (this.element.parent().size() > 0) {
+				var parent = this.parent();
+				parent.element.detach();
+				parent.save();
+			}
 			this.element.appendTo(task.element.children(".task-list"));
+			task.save();
 		},
 
 		remove: function() {
@@ -60,12 +72,14 @@ $(document).ready(function() {
 		},
 
 		checked: function(new_checked) {
+			/* TODO
 			if (_.isUndefined(new_checked)) {
-				return this.element.attr("id");
+				return this.element.attr("checked");
 			} else {
-				this.element.attr("id", new_checked);
+				this.element.attr("checked", new_checked);
 				this.save();
 			}
+			*/
 		},
 
 		stringify: function() {
@@ -73,8 +87,9 @@ $(document).ready(function() {
 				id: this.id(),
 				title: this.title(),
 				checked: this.checked(),
-				// TODO: Task.prototype.id?
-				children: _.map(this.children(), Task.prototype.id)
+				children: _.map(this.children(), function(child) {
+					return child.id();
+				})
 			});
 		},
 
@@ -103,9 +118,10 @@ $(document).ready(function() {
 		task.title(o.title);
 		task.checked(o.checked);
 
-		_.each(o.children, function(child) {
-			// TODO: Task.load(child).insertChild(task);
-		});
+		// _.each(o.children, function(child) {
+		// 	Task.load(child).insertChild(task);
+		// });
+
 		return task;
 	}
 
@@ -120,6 +136,7 @@ $(document).ready(function() {
 	}
 
 	Task.get = function(selector) {
+		// TODO: check to see if it's a string?
 		return new Task(selector.closest(".task"));
 	}
 
@@ -129,7 +146,7 @@ $(document).ready(function() {
 			var $task = $(ui.draggable);
 			$task.css({top:0,left:0});
 
-			Task.get($task).insertChild($(this));
+			Task.get($task).insertChild(Task.get($(this)));
 		}
 	};
 
@@ -139,7 +156,7 @@ $(document).ready(function() {
 			var $task = $(ui.draggable);
 			$task.css({top:0,left:0});
 
-			Task.get($task).insertAfter($(this));
+			Task.get($task).insertAfter(Task.get($(this)));
 		}
 	};
 
@@ -288,7 +305,7 @@ $(document).ready(function() {
 	var root = JSON.parse(localStorage.getItem("task-root"));
 	if (root != null) {
 		_.each(root.children, function(child) {
-			Task.get($("#task-root")).insertChild(Task.load(child));
+			Task.load(child).insertChild(Task.get($("#task-root")));
 		});
 	}
 });
