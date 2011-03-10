@@ -19,7 +19,29 @@ $(document).ready(function() {
 			task.parent().save();
 		},
 
+		addState: function(state) {
+			return this.element.addClass(state);
+		},
+
+		hasState: function(state) {
+			return this.element.hasClass(state);
+		},
+
+		removeState: function(state) {
+			return this.element.removeClass(state);
+		},
+
 		insertChild: function(task) {
+			if (this.element.parent().size() > 0) {
+				var parent = this.parent();
+				this.element.detach();
+				parent.save();
+			}
+			this.element.insertAfter(task.element.find("> .task-list > .task-insert-child"));
+			task.save();
+		},
+
+		appendChild: function(task) {
 			if (this.element.parent().size() > 0) {
 				var parent = this.parent();
 				this.element.detach();
@@ -127,7 +149,7 @@ $(document).ready(function() {
 		var task = Task.initialize(json);
 
 		_.each(json.children, function(child) {
-			Task.load(child).insertChild(task);
+			Task.load(child).appendChild(task);
 		});
 
 		return task;
@@ -226,15 +248,15 @@ $(document).ready(function() {
 	$(".task-insert-child").click(function(e) {
 		var task = Task.initialize({});
 		task.insertChild(Task.get($(e.currentTarget)));
+		task.addState("task-title-create");
 		task.element.find("> div > .task-title").click();
-		task.element.find("> div > .task-title-edit").addClass("task-title-create");
 	});
 
 	$(".task-insert-after").click(function(e) {
 		var task = Task.initialize({});
 		task.insertAfter(Task.get($(e.currentTarget)));
+		task.addState("task-title-create");
 		task.element.find("> div > .task-title").click();
-		task.element.find("> div > .task-title-edit").addClass("task-title-create");
 	});
 
 	// TODO: make this work with drag/drop
@@ -242,32 +264,33 @@ $(document).ready(function() {
 	// only have a single instance that moves around?
 	// drag/drop needs just a little bit of snap
 	$(".task-title").click(function(e) {
-		var title = $(e.currentTarget);
-		title.hide();
-		title.siblings(".task-title-edit")
-			.val(title.text())
+		var $title = $(e.currentTarget);
+		$title.hide();
+		$title.siblings(".task-title-edit")
+			.val($title.text())
 			.show()
 			.focus()
 			.select();
 	});
 
 	$(".task-title-edit").focusout(function(e) {
+		var task = Task.get($(e.currentTarget));
 		var $editing = $(e.currentTarget);
 		var $title = $editing.siblings(".task-title");
 
-		// TODO: keep the state of the item, if it's currently being created
-		// destroy it if it's empty
-		if ($editing.hasClass("task-title-moving"))
+		if (task.hasState("task-title-moving"))
 			return;
+
 		if ($editing.val().trim() != "") {
-			// TODO use the API
-			$title.text($editing.val());
-			Task.get($title).save();
-			$editing.removeClass("task-title-create");
-		} else if ($editing.hasClass("task-title-create")) {
+			task.title($editing.val().trim());
+			task.save();
+
+			task.removeState("task-title-create");
+		} else if (task.hasState("task-title-create")) {
 			Task.get($title).remove();
 			return;
 		}
+
 		$editing.hide();
 		$title.show();
 	});
@@ -275,6 +298,7 @@ $(document).ready(function() {
 	var shiftDown = false;
 
 	$(".task-title-edit").keydown(function(e) {
+		// TODO: enter should add a new task below
 		switch (e.keyCode) {
 		case 9:
 			var $title = $(e.currentTarget);
@@ -286,9 +310,9 @@ $(document).ready(function() {
 				if (parent.id() == "task-root")
 					return false;
 
-				$title.addClass("task-title-moving");
+				task.addState("task-title-moving");
 				task.insertAfter(parent);
-				$title.removeClass("task-title-moving");
+				task.removeState("task-title-moving");
 
 				$title.focus().select();
 			} else {
@@ -297,9 +321,9 @@ $(document).ready(function() {
 				if (!previous.exists())
 					return false;
 
-				$title.addClass("task-title-moving");
+				task.addState("task-title-moving");
 				task.insertChild(previous);
-				$title.removeClass("task-title-moving");
+				task.removeState("task-title-moving");
 
 				$title.focus().select();
 			}
@@ -326,7 +350,7 @@ $(document).ready(function() {
 	if (root != null) {
 		var rootTask = new Task($("#task-root"));
 		_.each(root.children, function(child) {
-			Task.load(child).insertChild(rootTask);
+			Task.load(child).appendChild(rootTask);
 		});
 	}
 });
