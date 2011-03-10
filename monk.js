@@ -58,7 +58,6 @@ $(document).ready(function() {
 				return this.element.find("> div > .task-title").text();
 			} else {
 				this.element.find("> div > .task-title").text(new_title);
-				this.save();
 			}
 		},
 
@@ -67,19 +66,36 @@ $(document).ready(function() {
 				return this.element.attr("id");
 			} else {
 				this.element.attr("id", new_id);
-				this.save();
 			}
 		},
 
 		checked: function(new_checked) {
-			/* TODO
 			if (_.isUndefined(new_checked)) {
-				return this.element.attr("checked");
+				return this.element.find("> div > .checkbox-checked").size() == 1;
 			} else {
-				this.element.attr("checked", new_checked);
-				this.save();
+				if (new_checked) {
+					this.element.find("> div > .checkbox-unchecked")
+						.removeClass("checkbox-unchecked")
+						.addClass("checkbox-checked");
+				} else {
+					this.element.find("> div > .checkbox-checked")
+						.removeClass("checkbox-checked")
+						.addClass("checkbox-unchecked");
+				}
 			}
-			*/
+		},
+
+		toggle: function() {
+			var $checkbox_checked = this.element.find("> div > .checkbox-checked");
+			var $checkbox_unchecked = this.element.find("> div > .checkbox-unchecked");
+
+			$checkbox_unchecked
+				.removeClass("checkbox-unchecked")
+				.addClass("checkbox-checked");
+			$checkbox_checked
+				.removeClass("checkbox-checked")
+				.addClass("checkbox-unchecked");
+			this.save();
 		},
 
 		stringify: function() {
@@ -123,6 +139,7 @@ $(document).ready(function() {
 		task.id(o.id);
 		task.title(o.title);
 		task.checked(o.checked);
+		task.save();
 
 		return task;
 	}
@@ -193,16 +210,7 @@ $(document).ready(function() {
 	});
 
 	$(".checkbox-checked,.checkbox-unchecked").click(function(e) {
-		var $checkbox = $(e.currentTarget);
-		if ($checkbox.hasClass("checkbox-unchecked")) {
-			$(e.currentTarget)
-				.removeClass("checkbox-unchecked")
-				.addClass("checkbox-checked");
-		} else if ($checkbox.hasClass("checkbox-checked")) {
-			$(e.currentTarget)
-				.removeClass("checkbox-checked")
-				.addClass("checkbox-unchecked");
-		}
+		Task.get($(e.currentTarget)).toggle();
 	});
 
 	$(".delete").click(function(e) {
